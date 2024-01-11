@@ -1,6 +1,6 @@
 import warnings
 
-from .core import db
+from .core import ID_ATTR_WARING, db
 from .hooks import hooks
 from .properties import Property, PropertyManager
 
@@ -75,32 +75,31 @@ class StructuredRel(StructuredRelBase):
     # Version 4.4 support - id is deprecated in version 5.x
     @property
     def id(self):
-        try:
-            return int(self.element_id_property)
-        except (TypeError, ValueError):
-            raise ValueError(
-                "id is deprecated in Neo4j version 5, please migrate to element_id. If you use the id in a Cypher query, replace id() by elementId()."
-            )
+        warnings.warn(ID_ATTR_WARING, category=DeprecationWarning, stacklevel=2)
+        if isinstance(self.element_id, int):
+            return self.element_id
+        else:
+            return self.element_id[self.element_id.rfind(":") + 1 :]
 
     # Version 4.4 support - id is deprecated in version 5.x
     @property
     def _start_node_id(self):
-        try:
-            return int(self._start_node_element_id_property)
-        except (TypeError, ValueError):
-            raise ValueError(
-                "id is deprecated in Neo4j version 5, please migrate to element_id. If you use the id in a Cypher query, replace id() by elementId()."
-            )
+        warnings.warn(ID_ATTR_WARING, category=DeprecationWarning, stacklevel=2)
+        if isinstance(self._start_node_element_id, int):
+            return self._start_node_element_id
+        else:
+            return self._start_node_element_id[
+                self._start_node_element_id.rfind(":") + 1 :
+            ]
 
     # Version 4.4 support - id is deprecated in version 5.x
     @property
     def _end_node_id(self):
-        try:
-            return int(self._end_node_element_id_property)
-        except (TypeError, ValueError):
-            raise ValueError(
-                "id is deprecated in Neo4j version 5, please migrate to element_id. If you use the id in a Cypher query, replace id() by elementId()."
-            )
+        warnings.warn(ID_ATTR_WARING, category=DeprecationWarning, stacklevel=2)
+        if isinstance(self._end_node_element_id, int):
+            return self._end_node_element_id
+        else:
+            return self._end_node_element_id[self._end_node_element_id.rfind(":") + 1 :]
 
     @hooks
     def save(self):
